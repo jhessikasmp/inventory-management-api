@@ -33,6 +33,9 @@ app.use('./api-docs', swaggerUi.serve, swaggerUi.setup(swaggerspec))
 
 app.use('/api/products', productRoutes) 
 app.use('/api/reports', reportRoutes) 
+app.get('/', (req,res)=> {
+  res.send('API de Gestao de Estoque')
+})
 
 app.use(errorHandler)
 
