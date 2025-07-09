@@ -67,8 +67,8 @@ inventory-api/
 ### Step-by-Step
 
 ```bash
-git clone <repository-url>
-cd inventory-api
+git clone <https://github.com/jhessikasmp/inventory-management-api>
+cd inventory-management-api
 npm install
 ```
 
@@ -214,15 +214,6 @@ GET /api/reports/weekly
 - Set `.env` variables
 - Automatic deployment on push
 
-### Heroku
-
-```bash
-heroku create your-app-name
-heroku config:set MONGODB_URI=<your-uri>
-git push heroku main
-```
-
----
 
 ## 🤝 Contributing
 
@@ -243,7 +234,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ## 📞 Support
 
 - GitHub Issues  
-- Email: `your-email@example.com`  
+- Email: `jhessika.smp@gmail.com`  
 - Docs: [localhost:3000/api-docs](http://localhost:3000/api-docs)
 
 ---
