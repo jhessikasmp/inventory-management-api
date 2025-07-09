@@ -28,7 +28,7 @@ const swaggerspec = swaggerJSDoc({
   },
   apis: ['./src/routers/*.js']
 })
-app.use('./api-docs', swaggerUi.serve, swaggerUi.setup(swaggerspec))
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerspec))
 
 
 app.use('/api/products', productRoutes) 
