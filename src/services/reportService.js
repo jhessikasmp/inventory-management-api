@@ -1,53 +1,49 @@
 const PDFDocument = require('pdfkit')
 const Products = require('../models/product')
 
-exports.generateWeeklyPDF = async (res, startDate, endDate) => {
+exports.generateWeeklyPDF = async (startDate, endDate) => {
     try {
-        const products = await Products.find()
+        const allProducts = await Products.find()
 
-        if (!products || products.length === 0)
-            return res.status(404).json({ error: 'Nenhum produto encontrado' })
+        if (!allProducts || allProducts.length === 0) {
+            throw new Error('Nessun prodotto trovato')
+        }
 
         const doc = new PDFDocument({ margin: 30, size: 'A4' })
+        const buffers = []
 
-        res.setHeader('Content-Type', 'application/pdf')
-        res.setHeader('Content-Disposition', 'attachment; filename=relatorio-semanal.pdf')
-
-        doc.on('error', (err) => {
-            console.error('Erro no documento PDF:', err)
-            if (!res.headersSent) {
-                res.status(500).json({ error: 'Erro ao gerar PDF' })
-            }
-        })
+        doc.on('data', buffers.push.bind(buffers))
         
-        res.on('error', (err) => {
-            console.error('Erro na resposta:', err)
+        return new Promise((resolve, reject) => {
+            doc.on('end', () => {
+                const pdfBuffer = Buffer.concat(buffers)
+                resolve(pdfBuffer)
+            })
+
+            doc.on('error', reject)
+
+            doc.fontSize(20).text('Rapporto Settimanale di Inventario', { align: 'center' }).moveDown()
+            doc.fontSize(15).text(`Periodo: ${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`).moveDown()
+            doc.fontSize(15).text('Prodotti').moveDown()
+
+            allProducts.forEach(product => {
+                try {
+                    const name = product.name || 'Nome non specificato'
+                    const quantity = product.quantity !== undefined ? product.quantity : 0
+                    const price = product.price !== undefined ? product.price : 0
+                    const expiryDate = product.expiryDate ? product.expiryDate.toLocaleDateString() : 'Data non specificata'
+
+                    doc.fontSize(12).text(`${name} | Quantità: ${quantity}, €${price.toFixed(2)} | Scadenza: ${expiryDate}`)
+                } catch (productErr) {
+                    console.error('Errore durante l\'elaborazione del prodotto:', productErr)
+                    doc.fontSize(12).text('Errore durante l\'elaborazione del prodotto')
+                }
+            })
+
+            doc.end()
         })
-
-        doc.pipe(res)
-        doc.fontSize(20).text('Relatório Semanal de Estoque', { align: 'center' }).moveDown()
-        doc.fontSize(12).text(`Período: ${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`).moveDown()
-        doc.fontSize(14).text('Produtos').moveDown()
-
-        products.forEach(product => {
-            try {
-                const name = product.name || 'Nome não informado'
-                const quantity = product.quantity !== undefined ? product.quantity : 0
-                const price = product.price !== undefined ? product.price : 0
-                const expiryDate = product.expiryDate ? product.expiryDate.toLocaleDateString() : 'Data não informada'
-                
-                doc.fontSize(12).text(`${name} | Qtd: ${quantity} | €${price.toFixed(2)} | Val: ${expiryDate}`)
-            } catch (productErr) {
-                console.error('Erro ao processar produto:', productErr)
-                doc.fontSize(12).text('Erro ao processar produto')
-            }
-        })
-
-        doc.end()
     } catch (err) {
-        console.error('Erro ao gerar PDF:', err)
-        if (!res.headersSent) {
-            res.status(500).json({ error: 'Erro ao gerar relatório PDF', details: err.message })
-        }
+        console.error('Errore durante la generazione del PDF:', err)
+        throw err
     }
 }

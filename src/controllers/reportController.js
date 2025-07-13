@@ -7,35 +7,39 @@ const lastWeekStart = () => {
     return day
 }
 
-exports.weekly = async (req,res,next) => {
+exports.weekly = async (req, res, next) => {
     try {
         let start, end
-        
+
         if(req.query.startDate) {
             start = new Date(req.query.startDate)
-            if (isNaN(start.getTime())) { 
-                return res.status(400).json({ erro: 'Data de inicio invalida'})
+            if (isNaN(start.getTime())) {
+                return res.status(400).json({ error: 'Data di inizio non valida' })
             }
-        } else { 
-            start = lastWeekStart() 
+        } else {
+            start = lastWeekStart()
         }
 
         if(req.query.endDate) {
             end = new Date(req.query.endDate)
-            if (isNaN(end.getTime())) { 
-                return res.status(400).json({ erro: 'Data de fim invalida'})
+            if (isNaN(end.getTime())) {
+                return res.status(400).json({ error: 'Data di fine non valida' })
             }
-        } else { 
-            end = new Date() 
-        }  
+        } else {
+            end = new Date()
+        }    
 
         if (start > end) {
-            return res.status(400).json({ erro: 'Data de inicio maior que a data de fim'})
+            return res.status(400).json({ error: 'La data di inizio non può essere successiva alla data di fine' })
         }
 
-        await generateWeeklyPDF(res, start, end)
+        const pdfBuffer = await generateWeeklyPDF(start, end)
+        
+        res.setHeader('Content-Type', 'application/pdf')
+        res.setHeader('Content-Disposition', 'attachment; filename=weekly-report.pdf')
+        res.send(pdfBuffer)
     } catch (err) {
-        console.error('Erro no controller weekly', err)
+        console.error('Errore nel controller weekly', err)
         next(err)
     }
 }

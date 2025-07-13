@@ -7,31 +7,30 @@ const router = express.Router()
  * @swagger
  * /products:
  *   get:
- *     summary: Listar todos os produtos
- *     tags: [Products]
+ *     summary: Ottieni tutti i prodotti
+ *     tags: [Prodotti]
  *     responses:
  *       200:
- *         description: Lista de produtos retornada com sucesso
+ *         description: Lista di tutti i prodotti
  */
-router.get('/', productController.getAll)
+router.get('/', productController.getall)
 
 /**
  * @swagger
  * /products/{id}:
  *   get:
- *     summary: Buscar produto por ID
- *     tags: [Products]
+ *     summary: Ottieni un prodotto per ID
+ *     tags: [Prodotti]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         schema:
- *           type: string
+ *         description: ID del prodotto
  *     responses:
  *       200:
- *         description: Produto encontrado
+ *         description: Prodotto trovato
  *       404:
- *         description: Produto não encontrado
+ *         description: Prodotto non trovato
  */
 router.get('/:id', productController.getById)
 
@@ -39,28 +38,29 @@ router.get('/:id', productController.getById)
  * @swagger
  * /products:
  *   post:
- *     summary: Criar novo produto
- *     tags: [Products]
+ *     summary: Crea un nuovo prodotto
+ *     tags: [Prodotti]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - name
- *               - price
- *               - quantity
  *             properties:
  *               name:
  *                 type: string
+ *               sku:
+ *                 type: string
+ *               quantity:
+ *                 type: number
  *               price:
  *                 type: number
- *               quantity:
- *                 type: integer
+ *               expiryDate:
+ *                 type: string
+ *                 format: date
  *     responses:
  *       201:
- *         description: Produto criado com sucesso
+ *         description: Prodotto creato con successo
  */
 router.post('/', productController.create)
 
@@ -68,14 +68,13 @@ router.post('/', productController.create)
  * @swagger
  * /products/{id}:
  *   put:
- *     summary: Atualizar produto
- *     tags: [Products]
+ *     summary: Aggiorna un prodotto
+ *     tags: [Prodotti]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         schema:
- *           type: string
+ *         description: ID del prodotto
  *     requestBody:
  *       required: true
  *       content:
@@ -85,15 +84,20 @@ router.post('/', productController.create)
  *             properties:
  *               name:
  *                 type: string
+ *               sku:
+ *                 type: string
+ *               quantity:
+ *                 type: number
  *               price:
  *                 type: number
- *               quantity:
- *                 type: integer
+ *               expiryDate:
+ *                 type: string
+ *                 format: date
  *     responses:
  *       200:
- *         description: Produto atualizado com sucesso
+ *         description: Prodotto aggiornato con successo
  *       404:
- *         description: Produto não encontrado
+ *         description: Prodotto non trovato
  */
 router.put('/:id', productController.update)
 
@@ -101,19 +105,18 @@ router.put('/:id', productController.update)
  * @swagger
  * /products/{id}:
  *   delete:
- *     summary: Deletar produto
- *     tags: [Products]
+ *     summary: Elimina un prodotto
+ *     tags: [Prodotti]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         schema:
- *           type: string
+ *         description: ID del prodotto
  *     responses:
  *       200:
- *         description: Produto deletado com sucesso
+ *         description: Prodotto eliminato con successo
  *       404:
- *         description: Produto não encontrado
+ *         description: Prodotto non trovato
  */
 router.delete('/:id', productController.delete)
 
@@ -121,33 +124,30 @@ router.delete('/:id', productController.delete)
  * @swagger
  * /products/{id}/sell:
  *   post:
- *     summary: Vender produto (reduzir estoque)
- *     tags: [Products]
+ *     summary: Vendi un prodotto
+ *     tags: [Prodotti]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         schema:
- *           type: string
+ *         description: ID del prodotto
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - quantity
  *             properties:
- *               quantity:
- *                 type: integer
- *                 minimum: 1
+ *               quantitySold:
+ *                 type: number
+ *                 description: Quantità venduta
  *     responses:
  *       200:
- *         description: Venda realizada com sucesso
+ *         description: Vendita registrata con successo
  *       400:
- *         description: Quantidade inválida ou estoque insuficiente
+ *         description: Quantità non valida o scorte insufficienti
  *       404:
- *         description: Produto não encontrado
+ *         description: Prodotto non trovato
  */
 router.post('/:id/sell', productController.sell)
 

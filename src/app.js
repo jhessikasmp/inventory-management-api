@@ -7,34 +7,31 @@ const reportRoutes = require('./routers/reportRoutes')
 const swaggerJSDoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
 
-
 dotenv.config()
 
 const app = express()
 app.use(express.json())
 
 mongoose.connect(process.env.MONGODB_URI, {
-}).then(() => console.log("MongoDB conectado"))
-  .catch(err => console.error("Erro MongoDB", err))
+}).then(() => console.log("MongoDB connesso"))
+  .catch(err => console.error('Error di connessione MongoDB '))
 
-
-const swaggerspec = swaggerJSDoc({
+const swaggerSpec = swaggerJSDoc({
   swaggerDefinition: {
     openapi: '3.0.0',
     info: {
-      title: 'API de Controlde de Estoque',
+      title: 'API per la Gestione dell`Inventario',
       version: '1.0.0',
-      description: 'APi para um melhor controle e gerenciamento de Estoque'}
+      description: `API per un Controllo e una Gestione ottimali dello Stock:`},
   },
   apis: ['./src/routers/*.js']
-})
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerspec))
+})  
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
-
-app.use('/api/products', productRoutes) 
-app.use('/api/reports', reportRoutes) 
-app.get('/', (req,res)=> {
-  res.send('API de Gestao de Estoque')
+app.use('/api/products', productRoutes)
+app.use('/api/reports', reportRoutes)
+app.get('/', (req,res) => {
+  res.send(`API per la Gestione dell'Inventario`)
 })
 
 app.use(errorHandler)
