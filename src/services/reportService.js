@@ -33,10 +33,10 @@ exports.generateWeeklyPDF = async (startDate, endDate) => {
                     const price = product.price !== undefined ? product.price : 0
                     const expiryDate = product.expiryDate ? product.expiryDate.toLocaleDateString() : 'Data non specificata'
 
-                    doc.fontSize(12).text(`${name} | Quantità: ${quantity}, €${price.toFixed(2)} | Scadenza: ${expiryDate}`)
+                    doc.fontSize(15).text(`${name} | Quantità: ${quantity}, €${price.toFixed(2)} | Scadenza: ${expiryDate}`)
                 } catch (productErr) {
-                    console.error('Errore durante l\'elaborazione del prodotto:', productErr)
-                    doc.fontSize(12).text('Errore durante l\'elaborazione del prodotto')
+                    console.error('Errore durante l`elaborazione del prodotto:', productErr)
+                    doc.fontSize(15).text('Errore durante l`elaborazione del prodotto')
                 }
             })
 
